@@ -1,4 +1,5 @@
 module Ecc
+  
   class Point
     
     attr_accessor :x, :y
@@ -6,7 +7,7 @@ module Ecc
     def initialize(curve, x, y)
 
       if curve.class != Curve
-        raise "1st argument type error"
+        raise "1st argument type error: "
       end
       
       @curve = curve
@@ -35,29 +36,30 @@ module Ecc
 
     def +(other)
       
-      u = Point.new(@ecc, self) if u.class != Point
-      v = Point.new(@ecc, other) if v.class != Point
-       
+      u = self
+      v = other
+      
       return u if v.zero?
       return v if u.zero?
       
-      lambda = nil
-        
+      t = 0
+      
       if u != v
-        lambda = ((v.y - u.y) * (((v.x - u.x) ** (@fp - 2)) % @fp)) % @fp
+        t = ((v.y - u.y) * (((v.x - u.x) ** (@curve.fp - 2)) % @curve.fp)) % @curve.fp
       else
-        lambda = ((3 * u.x ** 2 + @a) * (((2 * u.y) ** (@fp - 2)) % @fp)) % @fp
+        t = ((3 * u.x ** 2 + @curve.a) * (((2 * u.y) ** (@curve.fp - 2)) % @curve.fp)) % @curve.fp
       end
        
-      x3 = lambda ** 2 - u.x - v.x
-      y3 = lambda * (u.x - x3) - u.y
-      Point.new(@ecc, [x3 % @fp, y3 % @fp])
+      x3 = t ** 2 - u.x - v.x
+      y3 = t * (u.x - x3) - u.y
+      
+      Point.new(@curve, x3 % @curve.fp, y3 % @curve.fp)
 
     end
 
     def *(d)
         
-      sum = Point.new(@ecc, self)
+      sum = self
       
       (d - 1).times do
         sum = sum + self
