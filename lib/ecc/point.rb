@@ -34,10 +34,14 @@ module Ecc
       
     end
 
+    def !=(other)
+      
+      not self == other
+      
+    end
+
     def +(other)
 
-      raise "Different elliptic curve" if self.curve != other.curve
-      
       u = self
       v = other
       

@@ -16,8 +16,24 @@ module Ecc
 
     def belong?(x,y)
       
-      return (y ** 2) % @fp == (x ** 3 + @a * x + @b) % @fp
+      return false unless 0 <= x and x < @fp
+      return false unless 0 <= y and y < @fp
       
+      (y ** 2) % @fp == (x ** 3 + @a * x + @b) % @fp
+      
+    end
+
+    def rational_points
+      result = []
+      a = (0...@fp).to_a
+      a.product(a).each do |x,y|
+        result << Ecc::Point.new(self, x, y) if belong?(x,y)
+      end
+      result
+    end
+
+    def group_order
+      rational_points.length + 1
     end
     
     def point_order(x, y)
@@ -33,7 +49,15 @@ module Ecc
     end
 
     def ==(other)
+      
       self.a == other.a and self.b == other.b and self.fp == other.fp
+      
+    end
+
+    def !=(other)
+      
+      not self == other
+      
     end
     
   end
