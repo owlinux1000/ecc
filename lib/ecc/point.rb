@@ -2,7 +2,7 @@ module Ecc
   
   class Point
     
-    attr_accessor :x, :y
+    attr_accessor :x, :y, :curve
     
     def initialize(curve, x, y)
 
@@ -39,7 +39,7 @@ module Ecc
       not self == other
       
     end
-
+    
     def +(other)
 
       u = self
