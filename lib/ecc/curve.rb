@@ -31,6 +31,10 @@ module Ecc
       end
       i
     end
+
+    def ==(other)
+      self.a == other.a and self.b == other.b and self.fp == other.fp
+    end
     
   end
   
