@@ -42,6 +42,8 @@ module Ecc
     
     def +(other)
 
+      raise "different elliptic curve" if self.curve != other.curve
+      
       u = self
       v = other
       
