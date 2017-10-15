@@ -36,16 +36,15 @@ module Ecc
       rational_points.length + 1
     end
     
-    def point_order(x, y)
-      
-      p2 = Point.new(self, x, y)
+    def point_order(p)
       
       i = 2
       loop do
-        break if p * i == p2
+        break if p * i == p
         i += 1
       end
       i
+      
     end
 
     def ==(other)
