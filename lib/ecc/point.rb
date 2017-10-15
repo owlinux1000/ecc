@@ -65,6 +65,14 @@ module Ecc
 
     end
 
+    def -(other)
+
+      raise "different elliptic curve" if self.curve != other.curve
+      
+      self + Point.new(self.curve, other.x, -1 * other.y)
+      
+    end
+
     def *(d)
       
       sum = self
