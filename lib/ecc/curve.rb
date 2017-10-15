@@ -1,4 +1,8 @@
 module Ecc
+
+  # Class for Elliptic Curve
+  #
+  # @since 0.1.0
   
   class Curve
       
@@ -14,27 +18,51 @@ module Ecc
       
     end
 
-    def belong?(x,y)
+    # Returns true if point on elliptic curve
+    # 
+    # @param [Ecc::Point] p
+    # @return [true, false]
+    
+    def belong?(p)
       
-      return false unless 0 <= x and x < @fp
-      return false unless 0 <= y and y < @fp
+      return false unless 0 <= p.x and p.x < @fp
+      return false unless 0 <= p.y and p.y < @fp
       
-      (y ** 2) % @fp == (x ** 3 + @a * x + @b) % @fp
+      (p.y ** 2) % @fp == (p.x ** 3 + @a * p.x + @b) % @fp
       
     end
 
+    # Returns rational point on elliptic curve.
+    # 
+    # @return [Array<Ecc::Point>]
+    
     def rational_points
+      
       result = []
+      
       a = (0...@fp).to_a
+      
       a.product(a).each do |x,y|
-        result << Ecc::Point.new(self, x, y) if belong?(x,y)
+        point = Ecc::Point.new(self, x, y)
+        result << point if belong?(point)
       end
+      
       result
+      
     end
 
-    def group_order
+    # Returns the order of an elliptic curve group
+    # 
+    # @return [Integer]
+    
+    def order
       rational_points.length + 1
     end
+
+    # Returns the order of point p
+    #
+    # @param [Ecc::Point]
+    # @return [Integer]
     
     def point_order(p)
       

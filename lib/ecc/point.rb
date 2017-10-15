@@ -1,13 +1,17 @@
 module Ecc
   
+  # Class for Point on Elliptic Curve
+  # 
+  # @since 0.1.0
+  
   class Point
     
     attr_accessor :x, :y, :curve
     
     def initialize(curve, x, y)
 
-      if curve.class != Curve
-        raise "1st argument type error: "
+      if curve.class != Curve or x.class != Integer or y.class != Integer
+        raise TypeError
       end
       
       @curve = curve
@@ -49,6 +53,10 @@ module Ecc
       
       return u if v.zero?
       return v if u.zero?
+
+      if u.x == v.x and u.y == -1 * v.y
+        return Point.new(@curve, 0, 0)
+      end
       
       t = 0
       
