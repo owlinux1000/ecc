@@ -1,3 +1,5 @@
+require 'gmp'
+
 module Ecc
 
   # Class for Elliptic Curve
@@ -9,10 +11,12 @@ module Ecc
     attr_accessor :a, :b, :fp
     
     def initialize(a, b, fp)
+
+      raise TypeError unless [a, b, fp].select{|x| x.class != Integer}.empty?
       
-      @a = a
-      @b = b
-      @fp = fp
+      @a = GMP::Z.new(a)
+      @b = GMP::Z.new(b)
+      @fp = GMP::Z.new(fp)
       
       raise "not elliptic curve" if 4 * (@a ** 3) + 27 * (@b ** 2) == 0
       
@@ -23,7 +27,7 @@ module Ecc
     # @param [Ecc::Point] p
     # @return [true, false]
     
-    def belong?(p)
+    def on_curve?(p)
       
       return false unless 0 <= p.x and p.x < @fp
       return false unless 0 <= p.y and p.y < @fp
@@ -43,8 +47,8 @@ module Ecc
       a = (0...@fp).to_a
       
       a.product(a).each do |x,y|
-        point = Ecc::Point.new(self, x, y)
-        result << point if belong?(point)
+        point = Ecc::Point.new(self, x.to_i, y.to_i)
+        result << point if on_curve?(point)
       end
       
       result

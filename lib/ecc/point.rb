@@ -1,3 +1,5 @@
+require 'gmp'
+
 module Ecc
   
   # Class for Point on Elliptic Curve
@@ -15,20 +17,21 @@ module Ecc
       end
       
       @curve = curve
-      @x = x
-      @y = y
+      @x = GMP::Z.new(x)
+      @y = GMP::Z.new(y)
       
     end
 
     def to_s
-        
+      
+      return "O" if self.zero?
       "(#{@x}, #{@y})"
       
     end
 
     def zero?
       
-      @x == 0 and @y == 0
+      @x == -1 and @y == -1
         
     end
     
@@ -55,21 +58,21 @@ module Ecc
       return v if u.zero?
 
       if u.x == v.x and u.y == -1 * v.y
-        return Point.new(@curve, 0, 0)
+        return Point.new(@curve, -1, -1)
       end
       
       t = 0
       
       if u != v
-        t = ((v.y - u.y) * (((v.x - u.x) ** (@curve.fp - 2)) % @curve.fp)) % @curve.fp
+        t = (v.y - u.y) * (v.x - u.x).powmod(@curve.fp - 2, @curve.fp)
       else
-        t = ((3 * u.x ** 2 + @curve.a) * (((2 * u.y) ** (@curve.fp - 2)) % @curve.fp)) % @curve.fp
+        t = (3 * u.x ** 2 + @curve.a) * (2 * u.y).powmod(@curve.fp - 2, @curve.fp)
       end
       
-      x3 = t ** 2 - u.x - v.x
-      y3 = t * (u.x - x3) - u.y
+      x3 = (t ** 2 - u.x - v.x) % @curve.fp
+      y3 = (t * (u.x - x3) - u.y) % @curve.fp
       
-      Point.new(@curve, x3 % @curve.fp, y3 % @curve.fp)
+      Point.new(@curve, x3.to_i, y3.to_i)
 
     end
 
@@ -77,7 +80,7 @@ module Ecc
 
       raise "different elliptic curve" if self.curve != other.curve
       
-      self + Point.new(self.curve, other.x, -1 * other.y)
+      self + Point.new(self.curve, other.x.to_i, (-1 * other.y).to_i)
       
     end
 
