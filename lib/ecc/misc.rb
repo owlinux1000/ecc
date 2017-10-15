@@ -1,7 +1,8 @@
 module Ecc
   
   # Baby-step Giant-step method. Calculate d of Q = dP
-  # 
+  #
+  # @since 0.1.3
   # @param [Curve] curve
   # @param [Point] p
   # @param [Point] q
