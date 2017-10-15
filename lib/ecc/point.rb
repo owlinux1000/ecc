@@ -57,7 +57,7 @@ module Ecc
       else
         t = ((3 * u.x ** 2 + @curve.a) * (((2 * u.y) ** (@curve.fp - 2)) % @curve.fp)) % @curve.fp
       end
-       
+      
       x3 = t ** 2 - u.x - v.x
       y3 = t * (u.x - x3) - u.y
       
@@ -66,11 +66,12 @@ module Ecc
     end
 
     def *(d)
-        
-      sum = self
       
-      (d - 1).times do
-        sum = sum + self
+      sum = self
+      d = d.to_s(2)[1..-1]
+      d.chars.each do |di|
+        sum = sum + sum
+        sum = sum + self if di == "1"
       end
       
       sum
@@ -78,5 +79,5 @@ module Ecc
     end
     
   end
-
+  
 end
